@@ -58,8 +58,8 @@ The deactivated add-ins are displayed in the shortcut menus of the supported wor
 取消激活的插件将显示在相应工作区的快捷菜单中。
 
 # Donate 捐赠
-TIA_Add_In_DeviceChange_Weidmueller is an open source plug-in class library, thank you for your support. We will continue to update the plugin class library about TIA Portal.  
-TIA_Add_In_DeviceChange_Weidmueller是一个完全开源的插件类库，感谢您的支持。我们会持续更新关于TIA Portal的插件类库。  
+TIA_Add_In_ProDiagTool is an open source plug-in class library, thank you for your support. We will continue to update the plugin class library about TIA Portal.  
+TIA_Add_In_ProDiagTool是一个完全开源的插件类库，感谢您的支持。我们会持续更新关于TIA Portal的插件类库。  
 
 Wechat Pay  
 <img width="274" alt="image" src="https://user-images.githubusercontent.com/36319693/170806833-e7533697-9f50-49d4-985a-45faf4d2d1aa.png">

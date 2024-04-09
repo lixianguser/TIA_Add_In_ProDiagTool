@@ -72,6 +72,7 @@ namespace TIA_Add_In_ProDiagTool
                             //指定AssignedProDiagFB
                             //if (assignedProDiagFB != "ProDiag_FB2")
                             //{
+                            exclusiveAccess.Text = instanceDb.Name + "指定FB监控为ProDiag_FB1";
                             instanceDb.SetAttribute("AssignedProDiagFB", "ProDiag_FB1");
                             //}
                         }
@@ -125,6 +126,7 @@ namespace TIA_Add_In_ProDiagTool
                             //指定AssignedProDiagFB
                             //if (assignedProDiagFB != "ProDiag_FB2")
                             //{
+                            exclusiveAccess.Text = instanceDb.Name + "指定FB监控为ProDiag_FB2";
                             instanceDb.SetAttribute("AssignedProDiagFB", "ProDiag_FB2");
                             //}
                         }
@@ -177,6 +179,7 @@ namespace TIA_Add_In_ProDiagTool
                             //指定AssignedProDiagFB
                             //if (assignedProDiagFB != "ProDiag_FB2")
                             //{
+                            exclusiveAccess.Text = instanceDb.Name + "指定FB监控为ProDiag_FB3";
                             instanceDb.SetAttribute("AssignedProDiagFB", "ProDiag_FB3");
                             //}
                         }

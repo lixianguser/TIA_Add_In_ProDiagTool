@@ -24,7 +24,7 @@ namespace TIA_Add_In_ProDiagTool
 
         protected override void BuildContextMenuItems(ContextMenuAddInRoot addInRootSubmenu)
         {
-            Submenu assignment =addInRootSubmenu.Items.AddSubmenu("指定ProDiag工具");
+            Submenu assignment =addInRootSubmenu.Items.AddSubmenu("指定ProDiagFB");
             assignment.Items.AddActionItem<InstanceDB>("指定ProDiag FB1", Assignment1_OnClick);
             assignment.Items.AddActionItem<InstanceDB>("指定ProDiag FB2", Assignment2_OnClick);
             assignment.Items.AddActionItem<InstanceDB>("指定ProDiag FB3", Assignment3_OnClick);

@@ -1,10 +1,8 @@
 ﻿using Siemens.Engineering;
 using Siemens.Engineering.AddIn.Menu;
-using Siemens.Engineering.SW;
 using Siemens.Engineering.SW.Blocks;
 using System;
 using System.Linq;
-using System.Resources;
 using System.Windows.Forms;
 
 namespace TIA_Add_In_ProDiagTool
@@ -15,28 +13,30 @@ namespace TIA_Add_In_ProDiagTool
         
         /// <summary>
         /// Base class for projects
-        /// can be use in multi-user environment
+        /// can be used in multi-user environment
         /// </summary>
         private ProjectBase _projectBase;
 
-        public AddIn(TiaPortal tiaPortal) : base("指定ProDiag FB")
+        public AddIn(TiaPortal tiaPortal) : base("ProDiag 工具")
         {
             _tiaPortal = tiaPortal;
         }
 
         protected override void BuildContextMenuItems(ContextMenuAddInRoot addInRootSubmenu)
         {
-            addInRootSubmenu.Items.AddActionItem<InstanceDB>("指定ProDiag FB1", Assignment1_OnClick);
-            addInRootSubmenu.Items.AddActionItem<InstanceDB>("指定ProDiag FB2", Assignment2_OnClick);
-            addInRootSubmenu.Items.AddActionItem<InstanceDB>("指定ProDiag FB3", Assignment3_OnClick);
-            addInRootSubmenu.Items.AddActionItem<InstanceDB>("无", AssignmentNone_OnClick);
-            addInRootSubmenu.Items.AddActionItem<IEngineeringObject>("如需配置，请选中实例数据块",
+            Submenu assignment =addInRootSubmenu.Items.AddSubmenu("指定ProDiag工具");
+            assignment.Items.AddActionItem<InstanceDB>("指定ProDiag FB1", Assignment1_OnClick);
+            assignment.Items.AddActionItem<InstanceDB>("指定ProDiag FB2", Assignment2_OnClick);
+            assignment.Items.AddActionItem<InstanceDB>("指定ProDiag FB3", Assignment3_OnClick);
+            assignment.Items.AddActionItem<InstanceDB>("删除指定的ProDiag", AssignmentNone_OnClick);
+            assignment.Items.AddActionItem<IEngineeringObject>("如需配置，请选中实例数据块",
                 menuSelectionProvider => { }, IsInstanceDB);
         }
-
-        //给实例DB块分配 ProDiag FB:
-        //轮询所有blocks获取ProDiag FB语言的块
-        //获取窗体选中的ProDiag FB块并指定到项目树中选中的实例块的ProDiag选项
+        
+        /// <summary>
+        /// 给实例DB块指定ProDiag_FB1
+        /// </summary>
+        /// <param name="menuSelectionProvider"></param>
         private void Assignment1_OnClick(MenuSelectionProvider<InstanceDB> menuSelectionProvider)
         {
 #if DEBUG
@@ -45,7 +45,7 @@ namespace TIA_Add_In_ProDiagTool
             try
             { 
                 // Multi-user support
-                // If TIA Portal is in multi user environment (connected to project server)
+                // If TIA Portal is in multiuser environment (connected to project server)
                 if (_tiaPortal.LocalSessions.Any())
                 {
                     _projectBase = _tiaPortal.LocalSessions
@@ -68,13 +68,13 @@ namespace TIA_Add_In_ProDiagTool
                             {
                                 return;
                             }
-                            //string assignedProDiagFB = instanceDb.GetAttribute("AssignedProDiagFB").ToString();
+                            string assignedProDiagFB = instanceDb.GetAttribute("AssignedProDiagFB").ToString();
                             //指定AssignedProDiagFB
-                            //if (assignedProDiagFB != "ProDiag_FB2")
-                            //{
-                            exclusiveAccess.Text = instanceDb.Name + "指定FB监控为ProDiag_FB1";
-                            instanceDb.SetAttribute("AssignedProDiagFB", "ProDiag_FB1");
-                            //}
+                            if (assignedProDiagFB != "ProDiag_FB2")
+                            {
+                                exclusiveAccess.Text = instanceDb.Name + "指定FB监控为ProDiag_FB1";
+                                instanceDb.SetAttribute("AssignedProDiagFB", "ProDiag_FB1");
+                            }
                         }
 
                         if (transaction.CanCommit)
@@ -86,10 +86,14 @@ namespace TIA_Add_In_ProDiagTool
             }
             catch (Exception ex)
             {
-                System.Windows.Forms.MessageBox.Show(ex.Message, "异常", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ex.Message, "异常", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
+        /// <summary>
+        /// 给实例DB块指定ProDiag_FB2
+        /// </summary>
+        /// <param name="menuSelectionProvider"></param>
         private void Assignment2_OnClick(MenuSelectionProvider<InstanceDB> menuSelectionProvider)
         {
             
@@ -99,7 +103,7 @@ namespace TIA_Add_In_ProDiagTool
             try
             { 
                 // Multi-user support
-                // If TIA Portal is in multi user environment (connected to project server)
+                // If TIA Portal is in multiuser environment (connected to project server)
                 if (_tiaPortal.LocalSessions.Any())
                 {
                     _projectBase = _tiaPortal.LocalSessions
@@ -122,13 +126,13 @@ namespace TIA_Add_In_ProDiagTool
                             {
                                 return;
                             }
-                            //string assignedProDiagFB = instanceDb.GetAttribute("AssignedProDiagFB").ToString();
+                            string assignedProDiagFB = instanceDb.GetAttribute("AssignedProDiagFB").ToString();
                             //指定AssignedProDiagFB
-                            //if (assignedProDiagFB != "ProDiag_FB2")
-                            //{
-                            exclusiveAccess.Text = instanceDb.Name + "指定FB监控为ProDiag_FB2";
-                            instanceDb.SetAttribute("AssignedProDiagFB", "ProDiag_FB2");
-                            //}
+                            if (assignedProDiagFB != "ProDiag_FB2")
+                            {
+                                exclusiveAccess.Text = instanceDb.Name + "指定FB监控为ProDiag_FB2";
+                                instanceDb.SetAttribute("AssignedProDiagFB", "ProDiag_FB2");
+                            }
                         }
 
                         if (transaction.CanCommit)
@@ -140,10 +144,14 @@ namespace TIA_Add_In_ProDiagTool
             }
             catch (Exception ex)
             {
-                System.Windows.Forms.MessageBox.Show(ex.Message, "异常", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ex.Message, "异常", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
+        /// <summary>
+        /// 给实例DB块指定ProDiag_FB3
+        /// </summary>
+        /// <param name="menuSelectionProvider"></param>
         private void Assignment3_OnClick(MenuSelectionProvider<InstanceDB> menuSelectionProvider)
         {
 #if DEBUG
@@ -152,7 +160,7 @@ namespace TIA_Add_In_ProDiagTool
             try
             { 
                 // Multi-user support
-                // If TIA Portal is in multi user environment (connected to project server)
+                // If TIA Portal is in multiuser environment (connected to project server)
                 if (_tiaPortal.LocalSessions.Any())
                 {
                     _projectBase = _tiaPortal.LocalSessions
@@ -175,13 +183,13 @@ namespace TIA_Add_In_ProDiagTool
                             {
                                 return;
                             }
-                            //string assignedProDiagFB = instanceDb.GetAttribute("AssignedProDiagFB").ToString();
+                            string assignedProDiagFB = instanceDb.GetAttribute("AssignedProDiagFB").ToString();
                             //指定AssignedProDiagFB
-                            //if (assignedProDiagFB != "ProDiag_FB2")
-                            //{
-                            exclusiveAccess.Text = instanceDb.Name + "指定FB监控为ProDiag_FB3";
-                            instanceDb.SetAttribute("AssignedProDiagFB", "ProDiag_FB3");
-                            //}
+                            if (assignedProDiagFB != "ProDiag_FB2")
+                            {
+                                exclusiveAccess.Text = instanceDb.Name + "指定FB监控为ProDiag_FB3";
+                                instanceDb.SetAttribute("AssignedProDiagFB", "ProDiag_FB3");
+                            }
                         }
 
                         if (transaction.CanCommit)
@@ -193,10 +201,14 @@ namespace TIA_Add_In_ProDiagTool
             }
             catch (Exception ex)
             {
-                System.Windows.Forms.MessageBox.Show(ex.Message, "异常", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ex.Message, "异常", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
+        /// <summary>
+        /// 删除给实例DB块指定的ProDiag
+        /// </summary>
+        /// <param name="menuSelectionProvider"></param>
         private void AssignmentNone_OnClick(MenuSelectionProvider<InstanceDB> menuSelectionProvider)
         {
 #if DEBUG
@@ -204,23 +216,53 @@ namespace TIA_Add_In_ProDiagTool
 #endif
             try
             {
-                //轮询选中的实例块
-                foreach (InstanceDB instanceDb in menuSelectionProvider.GetSelection())
+                // Multi-user support
+                // If TIA Portal is in multiuser environment (connected to project server)
+                if (_tiaPortal.LocalSessions.Any())
                 {
-                    //string assignedProDiagFB = instanceDb.GetAttribute("AssignedProDiagFB").ToString();
-                    //指定AssignedProDiagFB
-                    //if (assignedProDiagFB != "ProDiag_FB2")
-                    //{
-                    instanceDb.SetAttribute("AssignedProDiagFB", "");
-                    //}
+                    _projectBase = _tiaPortal.LocalSessions
+                        .FirstOrDefault(s => s.Project != null && s.Project.IsPrimary)?.Project;
+                }
+                else
+                {
+                    // Get local project
+                    _projectBase = _tiaPortal.Projects.FirstOrDefault(p => p.IsPrimary);
+                }
+
+                using (ExclusiveAccess exclusiveAccess = _tiaPortal.ExclusiveAccess("配置中……"))
+                {
+                    using (Transaction transaction = exclusiveAccess.Transaction(_projectBase, "删除指定ProDiagFB"))
+                    {
+                        //轮询选中的实例块
+                        foreach (InstanceDB instanceDb in menuSelectionProvider.GetSelection())
+                        {
+                            string assignedProDiagFB = instanceDb.GetAttribute("AssignedProDiagFB").ToString();
+                            //指定AssignedProDiagFB
+                            if (assignedProDiagFB != "")
+                            {
+                                exclusiveAccess.Text = instanceDb.Name + "删除指定FB监控";
+                                instanceDb.SetAttribute("AssignedProDiagFB", "");
+                            }
+                        }
+                        
+                        if (transaction.CanCommit)
+                        {
+                            transaction.CommitOnDispose();
+                        }
+                    }
                 }
             }
             catch (Exception ex)
             {
-                System.Windows.Forms.MessageBox.Show(ex.Message, "异常", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ex.Message, "异常", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
+        /// <summary>
+        /// 判断当前选项是否为实例DB块
+        /// </summary>
+        /// <param name="menuSelectionProvider"></param>
+        /// <returns></returns>
         private static MenuStatus IsInstanceDB(MenuSelectionProvider menuSelectionProvider)
         {
             var show = false;

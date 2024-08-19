@@ -181,6 +181,8 @@ namespace TIA_Add_In_ProDiagTool
                                 && p.AlarmText.Contains(dB_Name))
                     .Select(p => p.AlarmText)
                     .ToList();
+                
+                longestAlarmText = string.Empty;
 
                 foreach (var item in chineseAlarmTexts.Where(item => item.Length > longestAlarmText.Length))
                 {
@@ -291,7 +293,7 @@ namespace TIA_Add_In_ProDiagTool
                 {
                     using (StreamReader reader = new StreamReader(csv))
                     {
-                        var data = reader.Analyze();
+                        var data = reader.Analyze(Path.GetFileName(csv));
                         proDiagInfos.AddRange(data);
                     }
                 }

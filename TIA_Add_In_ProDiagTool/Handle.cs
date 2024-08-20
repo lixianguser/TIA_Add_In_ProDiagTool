@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -75,8 +76,23 @@ namespace TIA_Add_In_ProDiagTool
 
                 if (plcBlock.ProgrammingLanguage == ProgrammingLanguage.ProDiag)
                 {
-                    string filePath = $@"{folder}\{plcBlock.Name}.csv";
-                    plcBlock.ExportInfo(filePath);
+                    string[] filePaths = 
+                    {
+                        $@"{folder}\{plcBlock.Name}_en-US.csv",
+                        $@"{folder}\{plcBlock.Name}_zh-CN.csv",
+                    };
+                    
+                    foreach (var file in filePaths)
+                    {
+                        // 检查文件是否存在
+                        if (File.Exists(file))
+                        {
+                            // 如果文件存在，则删除
+                            File.Delete(file);
+                        }
+                    }
+                    
+                    plcBlock.ExportInfo(filePaths[0]);
                 }
             }
 
@@ -130,8 +146,22 @@ namespace TIA_Add_In_ProDiagTool
                 string blockTypeSupervisionNumber =
                     blockInstSupervisionNode.GetBlockInstSupervision("BlockTypeSupervisionNumber"); //监控的类型:1
                 //获取监控的接口节点
-                XmlNode xmlNode = xmlDocument.GetInterfaceMember(GetSupervisionInterface(stateStruct));
+                string  itf     = GetSupervisionInterface(stateStruct);
+                XmlNode xmlNode = xmlDocument.GetInterfaceMember(itf);
                 string  offset  = int.Parse(xmlNode.GetAttribute("Offset")).CalOffset(); //监控的偏移量:178.0
+                
+                //获取起始值
+                string count             = Regex.Match(itf, @"\d+").Value;
+                string startValue        = string.Empty;
+                if (count.Length < 2)
+                {
+                    count = string.Empty;
+                }
+                XmlNode convNumber = xmlDocument.GetInterfaceMember($"X_ConveyorNumber{count}");
+                if (convNumber != null)
+                {
+                    startValue = convNumber.GetAttribute("StartValue");
+                }
 
                 // 添加数据
                 XmlInfo xmlInfo = new XmlInfo
@@ -169,6 +199,8 @@ namespace TIA_Add_In_ProDiagTool
                 foreach (var item in englishAlarmTexts.Where(item => item.Length > longestAlarmText.Length))
                 {
                     longestAlarmText = item;
+                    //设备号的起始值替换P@4%5u@或P@4%4d@
+                    longestAlarmText = Regex.Replace(item, @"@[^@]*@", startValue);
                 } 
                 
                 // 最终将最长的字符串赋值给xmlInfo.AlarmTextEn
@@ -187,6 +219,8 @@ namespace TIA_Add_In_ProDiagTool
                 foreach (var item in chineseAlarmTexts.Where(item => item.Length > longestAlarmText.Length))
                 {
                     longestAlarmText = item;
+                    //设备号的起始值替换P@4%5u@或P@4%4d@
+                    longestAlarmText = Regex.Replace(item, @"@[^@]*@", startValue);
                 } 
 
                 // 最终将最长的字符串赋值给xmlInfo.AlarmTextZh
@@ -418,34 +452,41 @@ namespace TIA_Add_In_ProDiagTool
         /// <summary>
         /// 诊断名称
         /// </summary>
-        public string StateStruct                { get; set; }
+        public string StateStruct { get; set; }
+
         /// <summary>
         /// 诊断编号
         /// </summary>
-        public string Number                     { get; set; }
+        public string Number { get; set; }
+
         /// <summary>
         /// 诊断类型
         /// </summary>
         public string BlockTypeSupervisionNumber { get; set; }
+
         /// <summary>
         /// 报警文本-英文
         /// </summary>
-        public string AlarmTextEn                { get; set; }
+        public string AlarmTextEn { get; set; }
+
         /// <summary>
         /// 报警文本-中文
         /// </summary>
-        public string AlarmTextZh                { get; set; }
+        public string AlarmTextZh { get; set; }
+
         /// <summary>
         /// 偏移量
         /// </summary>
-        public string Offset                     { get; set; }
+        public string Offset { get; set; }
+
         /// <summary>
         /// DB块名称
         /// </summary>
-        public string DB_Name                    { get; set; }
+        public string DB_Name { get; set; }
+
         /// <summary>
         /// DB块编号
         /// </summary>
-        public string DB_Number                  { get; set; }
+        public string DB_Number { get; set; }
     }
 }
